@@ -6,11 +6,18 @@ class SessionsController < ApplicationController
       %w(access_token refresh_token).each do |key|
         session[key.to_sym] = resp.parsed_response[key]
       end
+      session[:email] = params[:email]
       session[:expires] = Time.now.to_i + resp.parsed_response['expires_in']
     else
       flash[:error] = resp.parsed_response['error']
     end
     redirect_to videos_path
+  end
+
+  def destroy
+    %i(email access_token refresh_token expires).each do |key|
+      session[key] = nil
+    end
   end
 
   private

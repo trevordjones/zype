@@ -1,7 +1,7 @@
 require 'rails_helper'
 describe 'videos#index', type: :feature do
   before do
-    stub_video_request
+    stub_videos_request
     visit videos_path
   end
 
@@ -18,25 +18,43 @@ end
 
 describe 'videos#show', type: :feature do
   context 'when a user is not signed in' do
-    before do
+    before { page.driver.submit :delete, sign_out_path, {} }
+
+    context 'when a video is subscription only' do
+      before do
+        video = stubbed_video(true)
+        stub_video_request(video)
+        visit video_path(video['response']['_id'])
+      end
+
+      it 'shows a subscription paywall' do
+        expect(page).to have_selector('#paywall', visible: true)
+        expect(page).to_not have_selector('.details')
+      end
     end
 
-    it 'shows the details screen of videos that do not require a subscription' do
-    end
+    context 'when a video is not subscription only' do
+      before do
+        video = stubbed_video(false)
+        stub_video_request(video)
+        visit video_path(video['response']['_id'])
+      end
 
-    it 'shows a subscription paywall of videos that do require a subscription' do
+      it 'shows the details screen' do
+        expect(page).to_not have_selector('#paywall')
+        expect(page).to have_selector('.details')
+      end
     end
   end
 
   context 'when a user is signed in' do
     before do
-      # click the login button
-      # fill in details
-      # be sure to stub login first
-      # visit videos path
+      #to be implemented
     end
 
-    it 'shows video details for all videos' do
+    it 'shows video details for a subscriber only video' do
+      expect(page).to_not have_selector('#paywall')
+      expect(page).to have_selector('.details')
     end
   end
 end

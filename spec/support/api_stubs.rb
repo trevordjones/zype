@@ -43,11 +43,17 @@ module ApiStubs
     }
   end
 
-  def stub_video_request(videos = nil)
+  def stub_videos_request(videos = nil)
     videos ||= stubbed_videos
     stub_request(:get, Rails.application.secrets.video_url)
       .with(query: { app_key: Rails.application.secrets.app_key })
       .to_return(body: videos.to_json, headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_video_request(video)
+    stub_request(:get, Rails.application.secrets.video_url + "/#{video['response']['_id']}")
+      .with(query: { app_key: Rails.application.secrets.app_key })
+      .to_return(body: video.to_json, headers: { 'Content-Type' => 'application/json' })
   end
 
   def stubbed_videos
@@ -70,5 +76,16 @@ module ApiStubs
       }
     end
     { 'response' => response }
+  end
+
+  def stubbed_video(subscription_required = false)
+    {
+      'response' => {
+        '_id' => SecureRandom.hex,
+        'active' => true,
+        'subscription_required' => subscription_required,
+        'title' => "Video Title"
+      }
+    }
   end
 end
