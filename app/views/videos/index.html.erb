@@ -1,0 +1,15 @@
+<div class="text-center">
+  <% @videos.each do |video| %>
+    <%= link_to video_path(video['_id']) do %>
+      <div class="video-thumbnail">
+        <h5><%= video['title'] %></h5>
+        <% video_thumbnail(video) do |thumbnail| %>
+          <img src="<%= thumbnail['url'] %>" height="<%= thumbnail['height'] %>" width="<%= thumbnail['width'] %>" alt="">
+        <% end %>
+        <span class="duration">
+          <%= video_duration(video['duration']) %>
+        </span>
+      </div>
+    <% end %>
+  <% end %>
+</div>

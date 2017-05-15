@@ -42,4 +42,33 @@ module ApiStubs
       "error_description"=> "there was an error"
     }
   end
+
+  def stub_video_request(videos = nil)
+    videos ||= stubbed_videos
+    stub_request(:get, Rails.application.secrets.video_url)
+      .with(query: { app_key: Rails.application.secrets.app_key })
+      .to_return(body: videos.to_json, headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stubbed_videos
+    response = []
+    3.times do |n|
+      response << {
+        '_id' => SecureRandom.hex,
+        'active' => true,
+        'subscription_required' => [true, false].sample,
+        'title' => "Video #{n}",
+        'duration' => rand(10..500),
+        'thumbnails' => [
+          {
+            'aspect_ratio' => 1.33,
+            'height' => 90,
+            'url' => 'image_url',
+            'width' => 120
+          }
+        ]
+      }
+    end
+    { 'response' => response }
+  end
 end
