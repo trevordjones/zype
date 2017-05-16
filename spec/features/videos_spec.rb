@@ -17,6 +17,7 @@ describe 'videos#index', type: :feature do
 end
 
 describe 'videos#show', type: :feature do
+  before { stub_videos_request }
   context 'when a user is not signed in' do
     before { page.driver.submit :delete, sign_out_path, {} }
 
@@ -49,12 +50,19 @@ describe 'videos#show', type: :feature do
 
   context 'when a user is signed in' do
     before do
-      #to be implemented
+      stub_login
+      visit root_path
+      click_link 'Login'
+      fill_in 'Email', with: 'email@test.com'
+      fill_in 'Password', with: 'password'
+      click_button 'Login'
+      video = stubbed_video(true)
+      stub_video_request(video)
+      visit video_path(video['response']['_id'])
     end
 
     it 'shows video details for a subscriber only video' do
       expect(page).to_not have_selector('#paywall')
-      expect(page).to have_selector('.details')
     end
   end
 end

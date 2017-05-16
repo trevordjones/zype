@@ -9,15 +9,17 @@ class SessionsController < ApplicationController
       session[:email] = params[:email]
       session[:expires] = Time.now.to_i + resp.parsed_response['expires_in']
     else
-      flash[:error] = resp.parsed_response['error']
+      flash[:danger] = 'Username or password incorrect'
     end
-    redirect_to videos_path
+    redirect_to request.referer || videos_path
   end
 
   def destroy
     %i(email access_token refresh_token expires).each do |key|
       session[key] = nil
     end
+    flash[:success] = 'Signed out!'
+    redirect_to videos_path
   end
 
   private

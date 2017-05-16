@@ -31,7 +31,7 @@ describe SessionsController, type: :controller do
         stub_invalid_login
         post :create, params: { email: 'email@test.com', password: 'badpassword' }
         expect(response).to redirect_to(videos_path)
-        expect(flash[:error]).to be_present
+        expect(flash[:danger]).to be_present
       end
     end
   end
