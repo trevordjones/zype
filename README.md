@@ -40,3 +40,16 @@ I felt the `app_key` and urls were not necessary to make as ENV variables or to 
 Tests will run even without setting these ENV variables.
 
 I used the Figaro gem to manage my ENV variables, but the Dotenv gem is great as well. Or just your `.bashrc` file.
+
+## To Run App
+
+```bash
+git clone git@github.com:trevordjones/zype.git
+cd zype
+bundle install
+bundle exec rake db:create
+bundle exec rake db:migrate # for good measure
+bundle exec rake db:test:prepare # also for good measure
+bundle exec rspec spec # to run test suite
+rails s
+```
